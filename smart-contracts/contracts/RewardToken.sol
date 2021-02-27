@@ -3,7 +3,11 @@
 
 pragma solidity ^0.6.0;
 
+import "./libs/SafeMath.sol";
+
 contract RewardToken {
+
+    using SafeMath for uint256;
 
     // Token definition
     string public name = "Preston's Token";
@@ -28,8 +32,8 @@ contract RewardToken {
     // Direct transfer from msg.sender
     function transfer(address to, uint256 value) public returns (bool success) {
         require(balanceOf[msg.sender] >= value, "Insufficient balance.");
-        balanceOf[msg.sender] -= value;
-        balanceOf[to] += value;
+        balanceOf[msg.sender] = balanceOf[msg.sender].sub(value);
+        balanceOf[to] = balanceOf[to].add(value);
         emit Transfer(msg.sender, to, value);
         return true;
     }
@@ -45,9 +49,9 @@ contract RewardToken {
     function transferFrom(address from, address to, uint256 value) public returns (bool success) {
         require(value <= balanceOf[from], "Insufficient balance");
         require(allowance[from][msg.sender] >= value, "Insufficient allowance");
-        balanceOf[from] -= value;
-        balanceOf[to] += value;
-        allowance[from][msg.sender] -= value;
+        balanceOf[from] = balanceOf[from].sub(value);
+        balanceOf[to] = balanceOf[to].add(value);
+        allowance[from][msg.sender] = allowance[from][msg.sender].sub(value);
         emit Transfer(from, to, value);
         return true;
     }
@@ -55,7 +59,7 @@ contract RewardToken {
     // conditions to allow minting a new tokens, to be added.
     function mint(uint256 value) public returns (bool success) {
         require(msg.sender == _owner, "Only the owner is authorized to mint a token.");
-        totalSupply += value;
+        totalSupply = totalSupply.add(value);
         emit Transfer(address(0), msg.sender, value);
         return true;
     }

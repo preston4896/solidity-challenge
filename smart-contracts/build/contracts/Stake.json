@@ -1,0 +1,106 @@
+{
+  "contractName": "Stake",
+  "abi": [],
+  "metadata": "{\"compiler\":{\"version\":\"0.6.0+commit.26b70077\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/mnt/d/Projects/Solidity/solidity-challenge/smart-contracts/contracts/Staker.sol\":\"Stake\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/mnt/d/Projects/Solidity/solidity-challenge/smart-contracts/contracts/Staker.sol\":{\"keccak256\":\"0xf50f85486e5f88672dae08b47f89a42816747694ea4fbb235ba2b932014b7021\",\"urls\":[\"bzz-raw://7d564f191f0ab7fd4f05df009a673be4e8e09b64738aaa28e7557baf468e85a9\",\"dweb:/ipfs/QmZnYFAVnXKx38HA2KDrvxUtgm1TASNqpSV7KgCkLmqNdU\"]}},\"version\":1}",
+  "bytecode": "0x6080604052348015600f57600080fd5b50603f80601d6000396000f3fe6080604052600080fdfea26469706673582212203f6c34c990b92cb0ea2cc49ff94266163a4904a26f6da2741aace613b45930eb64736f6c63430006000033",
+  "deployedBytecode": "0x6080604052600080fdfea26469706673582212203f6c34c990b92cb0ea2cc49ff94266163a4904a26f6da2741aace613b45930eb64736f6c63430006000033",
+  "sourceMap": "90:23:2:-:0;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;90:23:2;;;;;;;",
+  "deployedSourceMap": "90:23:2:-:0;;;;;",
+  "source": "// Contract to possess staked tokens and to distribute rewards.\n\npragma solidity ^0.6.0;\n\ncontract Stake {\n    \n}",
+  "sourcePath": "/mnt/d/Projects/Solidity/solidity-challenge/smart-contracts/contracts/Staker.sol",
+  "ast": {
+    "absolutePath": "/mnt/d/Projects/Solidity/solidity-challenge/smart-contracts/contracts/Staker.sol",
+    "exportedSymbols": {
+      "Stake": [
+        299
+      ]
+    },
+    "id": 300,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 298,
+        "literals": [
+          "solidity",
+          "^",
+          "0.6",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "65:23:2"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 299,
+        "linearizedBaseContracts": [
+          299
+        ],
+        "name": "Stake",
+        "nodeType": "ContractDefinition",
+        "nodes": [],
+        "scope": 300,
+        "src": "90:23:2"
+      }
+    ],
+    "src": "65:48:2"
+  },
+  "legacyAST": {
+    "absolutePath": "/mnt/d/Projects/Solidity/solidity-challenge/smart-contracts/contracts/Staker.sol",
+    "exportedSymbols": {
+      "Stake": [
+        299
+      ]
+    },
+    "id": 300,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 298,
+        "literals": [
+          "solidity",
+          "^",
+          "0.6",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "65:23:2"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 299,
+        "linearizedBaseContracts": [
+          299
+        ],
+        "name": "Stake",
+        "nodeType": "ContractDefinition",
+        "nodes": [],
+        "scope": 300,
+        "src": "90:23:2"
+      }
+    ],
+    "src": "65:48:2"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.6.0+commit.26b70077.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.3.2",
+  "updatedAt": "2021-02-27T17:50:40.936Z",
+  "devdoc": {
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {}
+  }
+}
