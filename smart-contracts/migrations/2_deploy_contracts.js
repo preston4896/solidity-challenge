@@ -1,7 +1,7 @@
 const RewardToken = artifacts.require("RewardToken");
-const Stake = artifacts.require("Stake");
+const Staker = artifacts.require("Staker");
 
 module.exports = function(deployer) {
-    deployer.deploy(RewardToken,10000);
-    deployer.deploy(Stake);
+    deployer.deploy(RewardToken);
+    deployer.deploy(Staker);
 }
