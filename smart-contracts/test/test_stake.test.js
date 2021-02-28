@@ -34,4 +34,51 @@ contract("Staker", (accounts) => {
         }
     })
 
+    it("2. Test deposit/stake tokens", async() => {
+        // excess deposit amount.
+        try {
+            await staker.deposit(2000);
+        } catch (error) {
+            assert(error.message.indexOf("revert") >= 0, "error message must contain revert.");
+        }
+
+        await staker.deposit(500, {from: accounts[1]});
+
+        // verify balance.
+        let staker_balance = await staker.balanceOf(accounts[1]);
+        let contract_balance = await staker.balanceOf(staker.address);
+        assert.equal(staker_balance.toNumber(), 500);
+        assert.equal(contract_balance.toNumber(), 500);
+
+        // verify staked.
+        let stakerObj = await staker.stakers(accounts[1]);
+        assert.equal(stakerObj.staked_amount.toNumber(), 500);
+
+        // stake more
+        await staker.deposit(250, {from: accounts[1]});
+
+        // verify balance.
+        staker_balance = await staker.balanceOf(accounts[1]);
+        contract_balance = await staker.balanceOf(staker.address);
+        assert.equal(staker_balance.toNumber(), 250);
+        assert.equal(contract_balance.toNumber(), 750);
+
+        // verify staked.
+        stakerObj = await staker.stakers(accounts[1]);
+        assert.equal(stakerObj.staked_amount.toNumber(), 750);
+
+        // stake from a 2nd account.
+        await staker.deposit(400, {from: accounts[2]});
+
+        // verify balance.
+        staker_balance = await staker.balanceOf(accounts[2]);
+        contract_balance = await staker.balanceOf(staker.address);
+        assert.equal(staker_balance.toNumber(), 600);
+        assert.equal(contract_balance.toNumber(), 1150);
+
+        // verify staked.
+        stakerObj = await staker.stakers(accounts[2]);
+        assert.equal(stakerObj.staked_amount.toNumber(), 400);
+    })
+
 })

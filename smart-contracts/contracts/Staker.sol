@@ -12,7 +12,6 @@ contract Staker is RewardToken {
     address public owner;
     uint256 public stake_ids;
     mapping(address => StakeProfile) public stakers; // keep track of stakers.
-    uint256 private totalStakedTokens;
     uint256 public totalRewardRate = 100; // a total of 100 rewards generated per minute to be distributed proportionally to all stakers.
 
     /**
@@ -48,6 +47,7 @@ contract Staker is RewardToken {
         require(balanceOf[msg.sender] >= amount, "Insufficient balance.");
         
         StakeProfile storage staker = stakers[msg.sender];
+        transfer(address(this), amount);
 
         // check if the profile already exists.
         if (staker.id > 0) {
