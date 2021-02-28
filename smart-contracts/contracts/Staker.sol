@@ -11,20 +11,18 @@ contract Staker is RewardToken {
 
     address public owner;
     uint256 public stake_ids;
-    uint256 public apy;
-    mapping(address => uint256) public stakerId; // associate staker's id to their address.
+    mapping(address => StakeProfile) public stakers; // keep track of stakers.
     uint256 private totalStakedTokens;
+    uint256 public totalRewardRate = 100; // a total of 100 rewards generated per minute to be distributed proportionally to all stakers.
 
     /**
-    * Staker profile. An object to keep record of staked amount and period.
+    * @dev Struct to keep record of staker profile.
     */
     struct StakeProfile {
         uint256 id;
         uint256 staked_amount; // the amount of token locked for staking.
+        uint256 reward_amount; // the amount of reward earned.
         uint256 starting_date;
-        uint256 total_balance; // the sum of staked tokens and rewards.
-        uint256 stake_period;
-        bool withdrawalable; // cannot withdraw if current time is less than starting_date + stake_period.
     }
 
     constructor() public {
@@ -32,8 +30,7 @@ contract Staker is RewardToken {
     }
 
     /**
-     * Mint and distribute 1000 tokens to 10 addresses each. There will be a total supply of 10000 tokens by the end 
-     * of this function call.
+     * @dev Function to mint and distribute 1000 tokens to 10 addresses each. There will be a total supply of 10000 tokens by the end of this function call.
      */
     function distributeTokens(address[10] memory recipients) public returns(bool success) {
         require(totalSupply < 10000, "Total supply amount exceeded 10000");
@@ -41,5 +38,27 @@ contract Staker is RewardToken {
             mint(recipients[i], 1000);
         }
         return true;
+    }
+
+    /**
+     * @dev Function to allow stakers to deposit tokens to stake.
+     * @return Staker ID.
+     */
+    function deposit(uint256 amount) public returns(uint256) {
+        require(balanceOf[msg.sender] >= amount, "Insufficient balance.");
+        
+        StakeProfile storage staker = stakers[msg.sender];
+
+        // check if the profile already exists.
+        if (staker.id > 0) {
+            staker.staked_amount = staker.staked_amount.add(amount);
+            return staker.id;
+        }
+        else {
+            stake_ids = stake_ids.add(1);
+            StakeProfile memory newStaker = StakeProfile(stake_ids, amount, 0, now);
+            stakers[msg.sender] = newStaker;
+            return stake_ids;
+        }
     }
 }

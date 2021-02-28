@@ -11,7 +11,7 @@ contract("Staker", (accounts) => {
         staker = await Staker.deployed();
     })
 
-    it("1. Test token distribution (AirDrop).", async() => {
+    it("1. Test initial token distribution (AirDrop).", async() => {
         // unauthorized airdrop
         try {
             await staker.distributeTokens(hodlers, {from: accounts[1]});
