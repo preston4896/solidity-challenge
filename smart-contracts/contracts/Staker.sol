@@ -17,7 +17,7 @@ contract Staker is RewardToken {
     uint256 private totalStake;
 
     event Staked(address user, uint256 amount);
-    event Unstaked(address user);
+    event Unstaked(address user, uint256 amount);
 
     /**
     * @dev Struct to keep record of staker profile.
@@ -111,7 +111,7 @@ contract Staker is RewardToken {
 
         uint amount = stakers[id].reward_earned.add(stakers[id].staked_amount);
         totalStake = totalStake.sub(amount);
-        emit Unstaked(stakers[id].addr);
+        emit Unstaked(stakers[id].addr, amount);
 
         delete addrToId[stakers[id].addr];
         delete stakers[id];
