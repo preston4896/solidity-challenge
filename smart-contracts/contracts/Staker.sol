@@ -16,7 +16,7 @@ contract Staker is RewardToken {
     uint256 public totalRewardRate = 100; // a total of 100 rewards generated per minute to be distributed proportionally to all stakers.
 
     event Staked(address user, uint256 amount);
-    event Unstaked(address user, uint256 amount);
+    event Unstaked(address user);
 
     /**
     * @dev Struct to keep record of staker profile.
@@ -27,7 +27,6 @@ contract Staker is RewardToken {
         uint256 reward_earned;
         uint256 starting_date;
         address addr;
-        bool isWithdrawable; // check if all gains are realized.
     }
 
     constructor() public {
@@ -41,7 +40,7 @@ contract Staker is RewardToken {
         uint durationInMin = (present.sub(stakers[id].starting_date)).div(60);
         uint totalReward = totalRewardRate.mul(durationInMin);
         uint staked = stakers[id].staked_amount;
-        uint percent = staked.div(balanceOf[address(this)]);
+        uint percent = staked.div(balanceOf[owner]); // the owner's balance can only contain total staked amount, because rewards are directly distributed to the stakers.
         return totalReward.mul(percent);
     }
 
@@ -55,13 +54,11 @@ contract Staker is RewardToken {
     }
 
     /**
-    * @dev Function to mint and distribute 1000 tokens to 10 addresses each. There will be a total supply of 10000 tokens by the end of this function call.
+    * @dev Function to provide ICO/AirDrop capability for owners.
     */
-    function airdrop(address[10] memory recipients) public returns(bool success) {
-        require(totalSupply < 10000, "Total supply amount exceeded 10000");
-        for (uint i = 0; i < 10; i++) {
-            mint(recipients[i], 1000);
-        }
+    function airdrop(address recipient, uint256 amount) public returns(bool success) {
+        require(msg.sender == owner, "Not the owner");
+        _mint(recipient, amount);
         return true;
     }
 
@@ -72,10 +69,10 @@ contract Staker is RewardToken {
     function deposit(uint256 amount) public returns(uint256) {
         require(balanceOf[msg.sender] >= amount, "Insufficient balance.");
         require(amount >= 100, "Amount is below the minimum stake requirement.");
-        require((msg.sender != owner) && (msg.sender != address(0)), "Owner or invaid address.");
+        require((msg.sender != owner) && (msg.sender != address(0)), "Owner or invaid address."); // TEMP
 
         StakeProfile storage staker = stakers[addrToId[msg.sender]];
-        transfer(owner, amount);
+        _burn(msg.sender, amount);
 
         emit Staked(msg.sender, amount);
 
@@ -94,19 +91,21 @@ contract Staker is RewardToken {
     }
 
     /**
-     * @dev Function to withdraw. TEMP: only owners can unstake funds.
+     * @dev Function to withdraw.
      */
     function withdraw(uint256 id) public updateReward(id) returns (bool success) {
-        require(msg.sender == owner, "Not the owner, unauthorized caller.");
+        require(msg.sender == stakers[id].addr, "Not the staker, unauthorized caller.");
         require(stakers[id].reward_earned > 0 || stakers[id].staked_amount >= 100, "Insufficient gains.");
         // mint new tokens for rewards earned.
         if (stakers[id].reward_earned > 0) {
-            mint(stakers[id].addr, stakers[id].reward_earned);
+            _mint(stakers[id].addr, stakers[id].reward_earned);
         }
         // transfer stake.
-        transfer(stakers[id].addr, stakers[id].staked_amount);
+        _mint(stakers[id].addr, stakers[id].staked_amount);
         stakers[id].staked_amount = 0;
         stakers[id].reward_earned = 0;
+
+        emit Unstaked(stakers[id].addr);
 
         delete addrToId[stakers[id].addr];
         delete stakers[id];

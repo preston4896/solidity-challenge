@@ -12,17 +12,12 @@ contract RewardToken {
     string public name = "Preston's Token";
     string public symbol = "PRES";
     uint256 public totalSupply;
-    address public minter;
 
     mapping(address => uint256) public balanceOf;
     mapping(address => mapping(address => uint256)) public allowance;
 
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Approval(address indexed owner, address indexed spender, uint256 value);
-
-    constructor() public {
-        minter = msg.sender;
-    }
 
     // Direct transfer from msg.sender
     function transfer(address to, uint256 value) public returns (bool success) {
@@ -52,11 +47,21 @@ contract RewardToken {
     }
 
     // mint tokens
-    function mint(address to, uint256 value) public returns (bool success) {
-        require(minter == msg.sender, "Unauthorized minter");
+    function _mint(address to, uint256 value) internal returns (bool success) {
+        require(msg.sender != address(0), "Invalid address");
         totalSupply = totalSupply.add(value);
         balanceOf[to] = balanceOf[to].add(value);
         emit Transfer(address(0), to, value);
+        return true;
+    }
+
+    // burn tokens
+    function _burn(address from, uint256 value) internal returns (bool success) {
+        require(msg.sender != address(0), "Invalid address");
+        require(balanceOf[from] >= value, "Insufficient balance to burn");
+        totalSupply = totalSupply.sub(value);
+        balanceOf[from] = balanceOf[from].sub(value);
+        emit Transfer(from, address(0), value);
         return true;
     }
 }
