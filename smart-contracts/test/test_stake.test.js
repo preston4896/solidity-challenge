@@ -14,11 +14,11 @@ contract("Staker", (accounts) => {
     it("1. Test initial token distribution (AirDrop).", async() => {
         // unauthorized airdrop
         try {
-            await staker.distributeTokens(hodlers, {from: accounts[1]});
+            await staker.airdrop(hodlers, {from: accounts[1]});
         } catch (error) {
             assert(error.message.indexOf("revert") >= 0, "error message must contain revert.");
         }
-        await staker.distributeTokens(hodlers);
+        await staker.airdrop(hodlers);
 
         // verify balance for all hodlers.
         for (let i = 0; i < 10; i++) {
@@ -28,7 +28,7 @@ contract("Staker", (accounts) => {
 
         // attempts to mint more tokens than the allocated 10000 tokens.
         try {
-            await staker.distributeTokens(hodlers);
+            await staker.airdrop(hodlers);
         } catch (error) {
             assert(error.message.indexOf("revert") >= 0, "error message must contain revert.");
         }
@@ -46,12 +46,12 @@ contract("Staker", (accounts) => {
 
         // verify balance.
         let staker_balance = await staker.balanceOf(accounts[1]);
-        let contract_balance = await staker.balanceOf(staker.address);
+        let owner_balance = await staker.balanceOf(accounts[0]);
         assert.equal(staker_balance.toNumber(), 500);
-        assert.equal(contract_balance.toNumber(), 500);
+        assert.equal(owner_balance.toNumber(), 500);
 
         // verify staked.
-        let stakerObj = await staker.stakers(accounts[1]);
+        let stakerObj = await staker.stakers(1);
         assert.equal(stakerObj.staked_amount.toNumber(), 500);
 
         // stake more
@@ -59,12 +59,12 @@ contract("Staker", (accounts) => {
 
         // verify balance.
         staker_balance = await staker.balanceOf(accounts[1]);
-        contract_balance = await staker.balanceOf(staker.address);
+        owner_balance = await staker.balanceOf(accounts[0]);
         assert.equal(staker_balance.toNumber(), 250);
-        assert.equal(contract_balance.toNumber(), 750);
+        assert.equal(owner_balance.toNumber(), 750);
 
         // verify staked.
-        stakerObj = await staker.stakers(accounts[1]);
+        stakerObj = await staker.stakers(1);
         assert.equal(stakerObj.staked_amount.toNumber(), 750);
 
         // stake from a 2nd account.
@@ -72,12 +72,12 @@ contract("Staker", (accounts) => {
 
         // verify balance.
         staker_balance = await staker.balanceOf(accounts[2]);
-        contract_balance = await staker.balanceOf(staker.address);
+        owner_balance = await staker.balanceOf(accounts[0]);
         assert.equal(staker_balance.toNumber(), 600);
-        assert.equal(contract_balance.toNumber(), 1150);
+        assert.equal(owner_balance.toNumber(), 1150);
 
         // verify staked.
-        stakerObj = await staker.stakers(accounts[2]);
+        stakerObj = await staker.stakers(2);
         assert.equal(stakerObj.staked_amount.toNumber(), 400);
     })
 
