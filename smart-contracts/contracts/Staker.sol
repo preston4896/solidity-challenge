@@ -14,6 +14,7 @@ contract Staker is RewardToken {
     mapping(uint256 => StakeProfile) public stakers; // keeps track of stakers.
     mapping(address => uint256) public addrToId; // associates IDs with staker address.
     uint256 public totalRewardRate = 100; // a total of 100 rewards generated per minute to be distributed proportionally to all stakers.
+    uint256 private totalStake;
 
     event Staked(address user, uint256 amount);
     event Unstaked(address user);
@@ -36,12 +37,13 @@ contract Staker is RewardToken {
     /**
     * @dev Function to calculate the reward.
     */
-    function calculateReward(uint256 id, uint256 present) public view returns(uint256) {
-        uint durationInMin = (present.sub(stakers[id].starting_date)).div(60);
+    function calculateReward(uint256 id, uint256 durationInMin) public view returns(uint256 reward) {
         uint totalReward = totalRewardRate.mul(durationInMin);
         uint staked = stakers[id].staked_amount;
-        uint percent = staked.div(balanceOf[owner]); // the owner's balance can only contain total staked amount, because rewards are directly distributed to the stakers.
-        return totalReward.mul(percent);
+        // solidity does not support floating numbers.
+        uint percent = (staked.mul(100)).div(totalStake);
+        reward = (totalReward.mul(percent)).div(100);
+        return reward;
     }
 
     /**
@@ -49,7 +51,9 @@ contract Staker is RewardToken {
     */
     modifier updateReward(uint256 id) {
         require(stakers[id].staked_amount > 0, "Insufficient staked amount.");
-        stakers[id].reward_earned = calculateReward(id, now);
+        uint duration = now.sub(stakers[id].starting_date);
+        uint durationInMin = duration.div(60);
+        stakers[id].reward_earned = calculateReward(id, durationInMin);
         _;
     }
 
@@ -73,6 +77,8 @@ contract Staker is RewardToken {
 
         StakeProfile storage staker = stakers[addrToId[msg.sender]];
         _burn(msg.sender, amount);
+
+        totalStake = totalStake.add(amount);
 
         emit Staked(msg.sender, amount);
 
@@ -102,9 +108,9 @@ contract Staker is RewardToken {
         }
         // transfer stake.
         _mint(stakers[id].addr, stakers[id].staked_amount);
-        stakers[id].staked_amount = 0;
-        stakers[id].reward_earned = 0;
 
+        uint amount = stakers[id].reward_earned.add(stakers[id].staked_amount);
+        totalStake = totalStake.sub(amount);
         emit Unstaked(stakers[id].addr);
 
         delete addrToId[stakers[id].addr];
