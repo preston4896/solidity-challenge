@@ -1,6 +1,8 @@
 const Staker = artifacts.require("Staker");
 const utils = require("./test_lib/utils"); // JavaScript library to manipulate blockchain timestamp.
 
+// Notes: Make sure there are at least 11 accounts on your local blockchain.
+
 contract("Staker", (accounts) => {
 
     // contract instance.
