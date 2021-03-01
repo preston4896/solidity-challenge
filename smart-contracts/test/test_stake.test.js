@@ -112,28 +112,27 @@ contract("Staker", (accounts) => {
             assert(error.message.indexOf("revert") >= 0, "error message must contain revert.");
         }
 
+        // accounts[1] withdraw.
+        await staker.withdraw(1, {from: accounts[1]});
+        // verify balance.
+        let bal_1 = await staker.balanceOf(accounts[1]);
+        assert.equal(bal_1.toNumber(), 1300, "400 + 600 + 300 = 1300");
+        let totalSupply = await staker.totalSupply();
+        assert.equal(totalSupply.toNumber(), 9900, "9000 + 600 + 300 = 9900");
+        // accounts[1] is no longer staking.
+        let stake1Obj = await staker.stakers(1);
+        assert.equal(stake1Obj.id, 0, "ID no longer exists.");
+
         // accounts[2] withdraw.
         await staker.withdraw(2, {from: accounts[2]});
         // verify balance.
         let bal_2 = await staker.balanceOf(accounts[2]);
         assert.equal(bal_2.toNumber(), 1200, "600 + 400 + 200 = 1200");
-        let totalSupply = await staker.totalSupply();
-        assert.equal(totalSupply.toNumber(), 9600, "9000 + 400 + 200 = 9600");
+        totalSupply = await staker.totalSupply();
+        assert.equal(totalSupply.toNumber(), 10500, "9900 + 400 + 200 = 10500");
         // accounts[2] is no longer staking.
         let stake2Obj = await staker.stakers(2);
         assert.equal(stake2Obj.id, 0, "ID no longer exists.");
-
-        // Note: OPCODE FAILED
-        // // accounts[1] withdraw.
-        // await staker.withdraw(1, {from: accounts[1]});
-        // // verify balance.
-        // let bal_1 = await staker.balanceOf(accounts[1]);
-        // assert.equal(bal_1.toNumber(), 1300, "400 + 600 + 300 = 1300");
-        // totalSupply = await staker.totalSupply();
-        // assert.equal(totalSupply.toNumber(), 10500, "9600 + 600 + 300 = 10500");
-        // // accounts[1] is no longer staking.
-        // let stake1Obj = await staker.stakers(1);
-        // assert.equal(stake1Obj.id, 0, "ID no longer exists.");
 
         // restore time.
         await utils.revertToSnapshot(snapshotID);

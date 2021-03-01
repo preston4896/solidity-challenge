@@ -110,7 +110,6 @@ contract Staker is RewardToken {
         _mint(stakers[id].addr, stakers[id].staked_amount);
 
         uint amount = stakers[id].reward_earned.add(stakers[id].staked_amount);
-        totalStake = totalStake.sub(amount);
         emit Unstaked(stakers[id].addr, amount);
 
         delete addrToId[stakers[id].addr];
