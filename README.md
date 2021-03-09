@@ -14,3 +14,7 @@ this contract will get deployed with some tokens minted for the distribution to 
 - launch ERC20 token
 - implement reward allocation logic
 - safe deposit/withdraw functions (avoid common attack vectors)
+
+
+## Smart Contract Deployed on Goerli Testnet!
+Check it out on Etherscan: https://goerli.etherscan.io/address/0x4Bf49Ca68f8A3C649dB15C9a23554145747eC77c
